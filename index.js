@@ -1,46 +1,13 @@
-/*
-In the node.js intro tutorial (http://nodejs.org/), they show a basic tcp 
-server, but for some reason omit a client connecting to it.  I added an 
-example at the bottom.
-Save the following server in example.js:
-*/
+var SocketClient = require('./lib/socket-client.js');
+var bindKeypress = new require('./lib/inputWorker.js');
 
-/*var net = require('net');
+var sc = new SocketClient(9999, 'localhost', true)
 
-var server = net.createServer(function(socket) {
-  socket.write('Echo server\r\n');
-  socket.pipe(socket);
-});
+console.log('press ENTER to start');
 
-server.listen(1337, '127.0.0.1');
-*/
-/*
-And connect with a tcp client from the command line using netcat, the *nix 
-utility for reading and writing across tcp/udp network connections.  I've only 
-used it for debugging myself.
-$ netcat 127.0.0.1 1337
-You should see:
-> Echo server
-*/
+bindKeypress(function(key){
+    sc.sendMessage('key: '+ JSON.stringify(key));
+}, function() {
+    sc.closeConnection(process.exit);
+})
 
-/* Or use this example tcp client written in node.js.  (Originated with 
-example code from 
-http://www.hacksparrow.com/tcp-socket-programming-in-node-js.html.) */
-
-var net = require('net');
-
-var client = new net.Socket();
-//client.connect(6000, '192.168.0.104', function() {
-client.connect(9999, 'localhost', function() {
-  console.log('Connected');
-  client.write('Hello, server! Love, Client.\n');
-});
-
-client.on('data', function(data) {
-  console.log('Received: ' + data);
-  client.destroy(); // kill client after server's response
-});
-
-client.on('close', function() {
-  console.log('Connection closed');
-});
