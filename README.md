@@ -1,4 +1,4 @@
-# event-socket-server
+# keyevent-socket-client
 Track keypress events and send it via socket.
 ## Get Started
 * to install: `npm i`
